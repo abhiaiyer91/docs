@@ -28,7 +28,7 @@ Redux Store's can be created with initial states. At the top of your DevTools yo
 * `mutations`
 * `data`
 
-Along with these keys, any non-apollo reducer will have the same behavior as they don in vanilla Redux today. 
+Along with these keys, any non-apollo reducer will have the same behavior as they do in vanilla Redux today. 
 
 As you interact with your application, the GraphQL server will resolve queries and mutations from the client. We utilize Redux to manage the state change our application goes through as we issue queries and mutations from the client.
   
@@ -50,7 +50,7 @@ When a query is executed and data has been resolved, the Store dispatches `QUERY
 
 ![QUERY_RESULT](../assets/devtools/query-result.png)
 
-When the Store gets a `QUERY_RESULT`, a couple pieces of state change. First our query is no longer `loading`, so we can see that state has updated in oure Store. Next we see that the `data` property is hyrdated with the data resolved by our query. From here you can use one of the Frontend integrations to bind the data from `QUERY_RESULT` to your UI Components. 
+When the Store gets a `QUERY_RESULT`, a couple pieces of state change. First our query is no longer `loading`, so we can see that state has updated in our Store. Next we see that the `data` property is hydrated with the data resolved by our query. From here you can use one of the Frontend integrations to bind the data from `QUERY_RESULT` to your UI Components. 
 
 ### Mutations
 

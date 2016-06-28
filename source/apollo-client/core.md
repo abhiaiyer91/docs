@@ -6,6 +6,50 @@ description: How to use the Apollo Client directly, without a view integration.
 
 Most of the time, when you use the Apollo Client, you'll do it through one of the view layer integrations. But sometimes, you just want to fetch some data directly and use it in your application logic, or your preferred view technology doesn't have an integration package.
 
+<h2 id="gql">gql template literals</h2>
+
+When using Apollo Client, you usually write your queries using multiline template literals. These literals need to be tagged with the `gql` tag, like this:
+
+```js
+import gql from 'graphql-tag';
+
+const query = gql`
+  {
+    user(id: 5) {
+      username
+    }
+  }
+`
+```
+
+The `gql` tag is a function that parses the query string passed to it. It can be found in the `graphql-tag` companion package on npm.
+
+As a shortcut, if you prefer *not* to import `gql` tag in every place you use it, you can register it as a global:
+
+```js
+// In the browser
+import gql from 'graphql-tag';
+window['gql'] = gql;
+
+// In node.js
+import gql from 'graphql-tag';
+global['gql'] = gql;
+
+// Now, in any part of your app you can use the gql tag
+const query = gql`...`;
+```
+
+**Note:** ES6 imports are hoisted, which may mean that client code using the `gql` tag gets evaluated before the registration of the global. To avoid race conditions, it's best to just import the tag into each file that uses it.
+
+<h3 id="why-gql">Why use a template literal?</h3>
+
+This template literal tag serves two functions:
+
+1. It parses the query string.
+2. It tells developer tools like `eslint-plugin-graphql` which strings in your app are GraphQL queries, so that they can be treated specially.
+
+Being able to statically analyze GraphQL queries in your app is a huge benefit of GraphQL, so it's correct to write them as special strings that can be found by these tools.
+
 <h2 id="queries">Queries</h2>
 
 The primary function of the Apollo Client is running GraphQL queries to retrieve data from the server. There are two ways to get data: running a query once and getting a single result, and running a query then watching the result via a callback.
@@ -20,7 +64,7 @@ If you want to fetch some data to perform a one-time operation, then `query` is 
 
 This means that using `watchQuery` will keep your UI consistent, so that every query being displayed on the screen shows the exact same data for the same objects.
 
-In the future, `watchQuery` will also have some extra options for reactivity, allowing you to set a polling interval, connect to a source of invalidations for reactive re-fetching, or accept pushed data from the server for low-latency updates. Using it now will allow you to easily switch those options on when they become available.
+Currently `watchQuery` allows reactivity via the optional `pollInterval` argument. In the future, `watchQuery` will also have more options for reactivity, like connecting to a source of invalidations for reactive re-fetching, or accepting pushed data from the server for low-latency updates. Using it now will allow you to easily switch those options on when they become available.
 
 <h3 id="forceFetch">query diffing and forceFetch</h3>
 
@@ -97,7 +141,7 @@ import ApolloClient from 'apollo-client';
 const client = new ApolloClient();
 
 client.query({
-  query: `
+  query: gql`
     query getCategory($categoryId: Int!) {
       category(id: $categoryId) {
         name
@@ -154,7 +198,7 @@ The object returned from `QueryObservable#subscribe`. Includes four methods:
 - `refetch(variables: Object)` Refetch this query from the server. Think of it like a refresh button. This can take an object of new variables
 - `unsubscribe()` Notify the client to no longer care about this query. After this is called, none of the callbacks on the observer will be fired anymore. It's very important to call this when you are done with the query, because that is what lets the client know that it can clean up the data associated with this subscription. The view integrations will do this for you.
 - `stopPolling()` Stop an actively polling query.
-- `startPolling(pollInterval: number)` Start polling a query 
+- `startPolling(pollInterval: number)` Start polling a query
 
 #### Code sample
 
@@ -162,7 +206,7 @@ All of the concepts above seem a bit complicated, but it's not hard to use in pr
 
 ```js
 const queryObservable = client.watchQuery({
-  query: `
+  query: gql`
     query getCategory($categoryId: Int!) {
       category(id: $categoryId) {
         name
@@ -227,7 +271,7 @@ import ApolloClient from 'apollo-client';
 const client = new ApolloClient();
 
 client.mutate({
-  mutation: `
+  mutation: gql`
     mutation postReply(
       $token: String!
       $topic_id: ID!
