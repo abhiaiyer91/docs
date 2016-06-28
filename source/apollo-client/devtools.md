@@ -28,7 +28,7 @@ Redux Store's can be created with initial states. At the top of your DevTools yo
 * `mutations`
 * `data`
 
-Along with these keys, any non-apollo reducer will have the same behavior as they don in vanilla Redux today. 
+Along with these keys, any non-apollo reducer will have the same behavior as they do in vanilla Redux today. 
 
 As you interact with your application, the GraphQL server will resolve queries and mutations from the client. We utilize Redux to manage the state change our application goes through as we issue queries and mutations from the client.
   
@@ -105,6 +105,8 @@ When a mutation is sent to your GraphQL server, Apollo dispatches an action to t
 Here we can see the `selection set` of our mutation and the variables used in the mutation. 
 
 When a mutation has been resolved, the Store dispatches `APOLLO_MUTATION_RESULT`. 
+
+![MUTATION_RESULT](../assets/devtools/mutation-result.png)
 
 * The keys `loading` to manage our mutation "readyness" 
 * `error` to have complete visibility of errors to the end user.
